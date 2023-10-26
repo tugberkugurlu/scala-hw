@@ -1,23 +1,21 @@
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Future, Await, ExecutionContext}
+import scala.concurrent.duration.Duration
 
 @main def hello: Unit = {
   println("Hello world!")
   println(msg)
 
-  doIt()
-
-  Thread.sleep(8000L)
+  Await.result(doIt(), Duration.Inf)
 }
 
-def doIt(): Future[Unit] = {
-  generateMagicNumberF().map({ result =>
-    for {
-      result2 <- generateMagicNumberAndPrintF()
-    } yield {
+def doIt() = {
+  generateMagicNumberF().flatMap({ result =>
+    generateMagicNumberAndPrintF().map(_ => {
       println(s"Magic number is $result")
-    }
+    })
   })
 }
 
